@@ -6,6 +6,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         this.root = null;
     }
 
+    private boolean isRoot(Node<T, K> node){
+        return (node.getParent() == null);
+    }
+
     public T find(K key) {
         if (this.root == null) {
             return null;
