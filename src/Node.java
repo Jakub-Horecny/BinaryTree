@@ -6,11 +6,19 @@ public class Node<T, K extends Comparable<K>>{
     private Node<T, K>  parent;
 
     public Node(T data, K key, Node<T, K> parent) {
-        this.key = key;
         this.data = data;
+        this.key = key;
+        this.parent = parent;
         this.leftSon = null;
         this.rightSon = null;
-        this.parent = parent;
+    }
+
+    public void delete(){
+        this.data = null;
+        this.key = null;
+        this.parent = null;
+        this.leftSon = null;
+        this.rightSon = null;
     }
 
     public K getKey() { return this.key; }
