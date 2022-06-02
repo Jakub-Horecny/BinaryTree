@@ -1,6 +1,10 @@
+import exceptions.EmptyTreeException;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -87,6 +91,18 @@ class BinaryTreeTest {
     }
 
     @Test
+    void inOrderTreeTraversal(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+        for (int i : this.treeList) {
+            tree.insert(i, i);
+            tempList.add(i);
+        }
+        Collections.sort(tempList);
+        assertEquals(tempList,tree.inOrder());
+    }
+
+    @Test
     void find() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         for (int i : this.treeList) {
@@ -98,7 +114,7 @@ class BinaryTreeTest {
     }
 
     @Test
-    void insert() {
+    void insertAllItemToTree() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         for (int i : this.treeList) {
             tree.insert(i, i);
@@ -109,6 +125,129 @@ class BinaryTreeTest {
     }
 
     @Test
-    void delete() {
+    void itemWithSameKeyWillNotBeInserted(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(50,50);
+        assertFalse(tree.insert(50,50));
+    }
+
+    @Test
+    void itemWithSameKeyWillNotBeInserted2() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        for(int item: this.treeList){
+            tree.insert(item,item);
+        }
+        assertFalse(tree.insert(this.treeList[0],this.treeList[0]));
+    }
+
+    @Test
+    void deleteAllItemInTree() {
+        ArrayList<Integer> stack = new ArrayList<>();
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        for (int item: this.treeList) {
+            stack.add(item);
+            tree.insert(item, item);
+        }
+        int stackSize = stack.size();
+        for (int i = 0; i < stackSize; i++) {
+            assertEquals(stack.get(i), tree.delete(stack.get(i)));
+            System.out.println("Deleted item:" + stack.get(i));
+            System.out.println(tree.inOrder());
+            System.out.println(tree.inOrder().size());
+            System.out.println("*************************");
+            stack.remove(i);
+        }
+    }
+
+    @Test
+    void deleteAllItemInTree2() {
+        int[] arr = {50,20,80,10,30,70,100,1,15,31,35,65,75,150};
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        for (int item: arr) {
+            tree.insert(item,item);
+        }
+        System.out.println(arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            assertEquals(arr[i], tree.delete(arr[i]));
+            System.out.println("Deleted item:" + arr[i]);
+            System.out.println(tree.inOrder());
+            System.out.println(tree.inOrder().size());
+            System.out.println("*************************");
+        }
+
+
+
+    }
+
+    @Test
+    void leftRotation() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+//        tree.insert(5,5);
+//        tree.insert(3,3);
+//        tree.insert(6,6);
+//        tree.insert(2,2);
+//        tree.insert(4,4);
+//        tree.insert(7,7);
+//        tree.insert(1,1);
+//        Node<Integer, Integer> tempNode = tree.findNode(3);
+        tree.insert(42,42);
+        tree.insert(16,16);
+        tree.insert(58,58);
+        tree.insert(8,8);
+        tree.insert(25,25);
+        tree.insert(49,49);
+        tree.insert(62,62);
+        Node<Integer, Integer> tempNode = tree.findNode(49);
+        tree.leftRotation(tempNode);
+        tree.inOrderPrint();
+    }
+
+    @Test
+    void rightRotation() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(50,50);
+        tree.insert(31,31);
+        tree.insert(10,10);
+        tree.insert(40,40);
+        tree.insert(69,69);
+        tree.insert(57,57);
+        tree.insert(90,90);
+        tree.insert(58,58);
+        tree.insert(99,99);
+        Node<Integer, Integer> tempNode = tree.findNode(69);
+        tree.rightRotation(tempNode);
+        tree.inOrderPrint();
+    }
+
+    @Test
+    void findIntervalStart() throws EmptyTreeException {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(50,50);
+        tree.insert(31,31);
+        tree.insert(10,10);
+        tree.insert(40,40);
+        tree.insert(69,69);
+        tree.insert(57,57);
+        tree.insert(90,90);
+        tree.insert(58,58);
+        tree.insert(99,99);
+        System.out.println(tree.findIntervalStart(20,99));
+        System.out.println(tree.findIntervalStart(89,99));
+        System.out.println(tree.findIntervalStart(58,99));
+        System.out.println(tree.findIntervalStart(100,150));
+    }
+
+    @Test
+    void findIntervalStart2() throws EmptyTreeException {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        for (int item: this.treeList) {
+            tree.insert(item, item);
+        }
+        System.out.println(Arrays.toString(this.treeList));
+
+        System.out.println(tree.findIntervalStart(20,99));
+        System.out.println(tree.findIntervalStart(89,99));
+        System.out.println(tree.findIntervalStart(58,99));
+        System.out.println(tree.findIntervalStart(100,150));
     }
 }

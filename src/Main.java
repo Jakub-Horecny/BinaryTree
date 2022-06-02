@@ -27,24 +27,24 @@ public class Main {
         tree.insert(4, 4);
         tree.insert(7, 7);
         tree.insert(13, 13);
-        tree.inOrder();
+        tree.inOrderPrint();
         int i = tree.delete(3);
         System.out.println("********************");
-        tree.inOrder();
+        tree.inOrderPrint();
         i = tree.delete(8);
         System.out.println("********************");
-        tree.inOrder();
+        tree.inOrderPrint();
         i = tree.delete(6);
         System.out.println("********************");
-        tree.inOrder();
+        tree.inOrderPrint();
 
 
-        tree.inOrder();
+        tree.inOrderPrint();
         System.out.println("********************");
-        tree.levelOrder();
+        tree.levelOrderPrint();
         System.out.println("********************");
-        tree.preOrder();
+        tree.preOrderPrint();
         System.out.println("********************");
-        tree.postOrder();
+        tree.postOrderPrint();
     }
 }
