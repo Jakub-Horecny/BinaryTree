@@ -250,4 +250,45 @@ class BinaryTreeTest {
         System.out.println(tree.findIntervalStart(58,99));
         System.out.println(tree.findIntervalStart(100,150));
     }
+
+    /**
+     * Test for interval search
+     */
+    @Test
+    void intervalSearch() {
+        int minInterval = 10000;
+        int maxInterval = 500000;
+        int min = 0;
+        int max = 1000000;
+        int key = 0;
+        int minKey = max;
+
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            key = min + (int)(Math.random() * ((max - min) + 1));
+            boolean b = tree.insert(key, key);
+            if (b) {
+                tempList.add(key);
+                if (key < minKey && key >= minInterval){
+                    minKey = key;
+                }
+            }
+        }
+        System.out.println(minKey);
+        //ArrayList<Integer> resultList = tree.intervalSearch(minInterval, maxInterval);
+
+        ArrayList<Integer> tempList2 = new ArrayList<>();
+        for (int i = 0; i < tempList.size(); i++) {
+            int temp = tempList.get(i);
+            if (temp <= maxInterval && temp >= minInterval){
+                tempList2.add(temp);
+            }
+        }
+        Collections.sort(tempList2);
+        System.out.println(tempList2);
+        assertEquals(tempList2, tree.intervalSearch(minInterval, maxInterval));
+
+    }
 }

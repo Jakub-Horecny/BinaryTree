@@ -269,9 +269,9 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @throws EmptyTreeException - if tree is empty
      */
     // TO DO
-    public K findIntervalStart(K minKey, K maxKey) throws EmptyTreeException {
+    public K findIntervalStart(K minKey, K maxKey) {
         if (this.root == null) {
-            throw new EmptyTreeException("Tree is empty!");
+            return null;
         }
         // if minKey > maxKey
         if (minKey.compareTo(maxKey) > 0){
@@ -347,8 +347,46 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return intervalStart;
     }
 
-    public void intervalSearch(K minKey, K maxKey){
-        // TO DO
+    public ArrayList<T> intervalSearch(K minKey, K maxKey) {
+        K minimalKey = this.findIntervalStart(minKey, maxKey);
+        ArrayList<T> tempList = new ArrayList<>(); // data to be returned
+        if(minimalKey == null){
+            return tempList;
+        }
+
+        Node<T,K> tempNode = this.findNode(minimalKey);
+        while (tempNode != null){
+            if (maxKey.compareTo(tempNode.getKey()) >= 0) {
+                tempList.add(tempNode.getData());
+                System.out.println(tempNode.getData());
+                //tempNode = tempNode.getRightSon();
+            } else {
+                break;
+            }
+            tempNode = this.findInOrderSuccessor(tempNode);
+        }
+        return tempList;
+    }
+
+    /**
+     * finds inOrder or preOrder successor for node
+     * @param node - node for which successor is sought
+     * @return successor node
+     */
+    private Node<T,K> findNodeSuccessor(Node<T,K> node) {
+        Node<T,K> tempNode = node;
+        if (tempNode.getLeftSon() != null) {
+            tempNode = tempNode.getLeftSon();
+            while(tempNode.getRightSon() != null){
+                tempNode = tempNode.getRightSon();
+            }
+        } else {
+            tempNode = tempNode.getRightSon();
+            while(tempNode.getLeftSon() != null){
+                tempNode = tempNode.getLeftSon();
+            }
+        }
+        return tempNode;
     }
 
     /**
@@ -562,7 +600,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
             }
             T data = nodeToDelete.getData();
             nodeToDelete.delete();
-            nodeToDelete = null;
+            //nodeToDelete = null;
             return data;
         }
         if (!this.isLeaf(nodeToDelete)) {
@@ -588,7 +626,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 }
 
                 successorNode.delete();
-                successorNode = null;
+                //successorNode = null;
 
             } else {
                 if (this.isRoot(nodeToDelete)){
@@ -603,7 +641,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
                         nodeToDelete.setRightSon(successorNode);
                     }
                     successorNode.delete();
-                    successorNode = null;
+                    //successorNode = null;
                 }
 
             }
@@ -612,26 +650,38 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return null;
     }
 
+
     /**
-     * finds inOrder or preOrder successor for node
-     * @param node - node for which successor is sought
-     * @return successor node
+     * returns inOrder successor for given node
+     * @param node - node for inOrder successor
+     * @return node that is inOrder successor for given node
      */
-    private Node<T,K> findNodeSuccessor(Node<T,K> node) {
+    private Node<T,K> findInOrderSuccessor(Node<T,K> node){
         Node<T,K> tempNode = node;
-        if (tempNode.getLeftSon() != null) {
-            tempNode = tempNode.getLeftSon();
-            while(tempNode.getRightSon() != null){
-                tempNode = tempNode.getRightSon();
-            }
-        } else {
+        if (tempNode.getRightSon() != null){
             tempNode = tempNode.getRightSon();
+
             while(tempNode.getLeftSon() != null){
                 tempNode = tempNode.getLeftSon();
+            }
+        } else {
+            if (this.isLeftSon(tempNode)){
+                tempNode = tempNode.getParent();
+            } else {
+                while (this.isRightSon(tempNode)){
+                    tempNode = tempNode.getParent();
+                    if (tempNode == null){
+                        return null;
+                    }
+                    if (this.isRoot(tempNode)){
+                        break;
+                    }
+                }
             }
         }
         return tempNode;
     }
+
     /**
      * Left rotation around the given node
      * @param node - node to rotate around
@@ -673,6 +723,11 @@ public class BinaryTree<T, K extends Comparable<K>> {
         oldLeft.setRightSon(node);
     }
 
+    /**
+     * Swaps keys and values of two given nodes
+     * @param node1 - first node
+     * @param node2 - second node
+     */
     private void swapNodes(Node<T,K> node1, Node<T,K> node2){
         T tempData = node1.getData();
         K tempKey = node1.getKey();
