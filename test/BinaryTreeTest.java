@@ -262,11 +262,12 @@ class BinaryTreeTest {
         int max = 1000000;
         int key = 0;
         int minKey = max;
+        int treeSize = 100000;
 
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         ArrayList<Integer> tempList = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100000; i++) {
             key = min + (int)(Math.random() * ((max - min) + 1));
             boolean b = tree.insert(key, key);
             if (b) {
@@ -280,14 +281,13 @@ class BinaryTreeTest {
         //ArrayList<Integer> resultList = tree.intervalSearch(minInterval, maxInterval);
 
         ArrayList<Integer> tempList2 = new ArrayList<>();
-        for (int i = 0; i < tempList.size(); i++) {
-            int temp = tempList.get(i);
-            if (temp <= maxInterval && temp >= minInterval){
-                tempList2.add(temp);
+        for (int item : tempList) {
+            if (item <= maxInterval && item >= minInterval) {
+                tempList2.add(item);
             }
         }
-        Collections.sort(tempList2);
-        System.out.println(tempList2);
+        //Collections.sort(tempList2);
+        //System.out.println(tempList2);
         assertEquals(tempList2, tree.intervalSearch(minInterval, maxInterval));
 
     }

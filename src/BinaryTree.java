@@ -1,4 +1,6 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Stack;
 
 import exceptions.*;
@@ -11,6 +13,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
+     * true if this.root == node, false otherwise
      * @param node - tree node
      * @return true if node tree root
      */
@@ -19,13 +22,16 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
+     * true if node has no sons, false otherwise
      * @param node - tree node
      * @return true if node is leaf
      */
     private boolean isLeaf(Node<T,K> node) {
         return (node.getLeftSon() == null && node.getRightSon() == null);
     }
+
     /**
+     * true if node is a left son, false otherwise
      * @param node - tree node
      * @return true if node is left son
      */
@@ -34,20 +40,25 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
+     * true if node is a right son, false otherwise
      * @param node - tree node
      * @return true if node is right son
      */
     private boolean isRightSon(Node<T,K> node) {
         return (node.getParent().getRightSon() == node);
     }
+
     /**
+     * true if node hase a right son, false otherwise
      * @param node - tree node
      * @return true if node has right son
      */
     private boolean hasRightSon(Node<T,K> node) {
         return (node.getRightSon() != null);
     }
+
     /**
+     * true if node hase a left son, false otherwise
      * @param node - tree node
      * @return true if node has left son
      */
@@ -75,6 +86,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         }
     }
 
+    /**
+     * returns ArrayList of tree items in inOrder traversal
+     * @return ArrayList of tree items
+     */
     public ArrayList<T> inOrder() {
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
         if (this.root == null){
@@ -117,6 +132,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         }
     }
 
+    /**
+     * returns ArrayList of tree items in preOrder traversal
+     * @return ArrayList of tree items
+     */
     public ArrayList<T> preOrder(){
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
         if(this.root == null){
@@ -177,6 +196,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         }
     }
 
+    /**
+     * returns ArrayList of tree items in postOrder traversal
+     * @return ArrayList of tree items
+     */
     public ArrayList<T> postOrder() {
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
         if (this.root == null){
@@ -237,6 +260,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         } while (!stack.isEmpty());
     }
 
+    /**
+     * returns ArrayList of tree items in levelOrder traversal
+     * @return ArrayList of tree items
+     */
     public ArrayList<T> levelOrder(){
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
         if (this.root == null){
@@ -263,10 +290,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
+     * finds node that is has key that is closest to minimum of interval
      * @param minKey - minimum of interval search
      * @param maxKey - maximum of interval search
      * @return key of interval start
-     * @throws EmptyTreeException - if tree is empty
      */
     // TO DO
     public K findIntervalStart(K minKey, K maxKey) {
@@ -324,7 +351,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
             */
             if (!this.isLeaf(tempNode)){
                 if (intervalStart.compareTo(tempNode.getKey()) > 0
-                        && minKey.compareTo(tempNode.getKey()) < 0){
+                        && minKey.compareTo(tempNode.getKey()) < 0) {
                     intervalStart = tempNode.getKey();
                 }
                 if (tempNode.getKey() == minKey){
@@ -335,7 +362,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
                     tempNode = tempNode.getRightSon();
             } else {
                 if (intervalStart.compareTo(tempNode.getKey()) > 0
-                        && minKey.compareTo(tempNode.getKey()) < 0){
+                        && minKey.compareTo(tempNode.getKey()) < 0) {
                     intervalStart = tempNode.getKey();
                 }
                 if (tempNode.getKey() == minKey){
@@ -347,6 +374,12 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return intervalStart;
     }
 
+    /**
+     * returns ArrayList<T> of all items that have: key >= minKey and key <= maxKey
+     * @param minKey minimum key of interval
+     * @param maxKey maximum key of interval
+     * @return ArrayList<T> of items in interval
+     */
     public ArrayList<T> intervalSearch(K minKey, K maxKey) {
         K minimalKey = this.findIntervalStart(minKey, maxKey);
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
@@ -358,7 +391,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
         while (tempNode != null){
             if (maxKey.compareTo(tempNode.getKey()) >= 0) {
                 tempList.add(tempNode.getData());
-                System.out.println(tempNode.getData());
+                // System.out.println(tempNode.getData());
                 //tempNode = tempNode.getRightSon();
             } else {
                 break;
@@ -419,6 +452,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return tempNode.getKey();
     }
 
+    /**
+     * finds and return data of node with the lowest key in tree
+     * @return data of node with the lowest key
+     */
     public T minValue(){
         if (this.root == null){
             return null;
@@ -430,6 +467,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return tempNode.getData();
     }
 
+    /**
+     * finds and return data of node with the lowest key in tree
+     * @return data of node with the lowest key
+     */
     public T maxValue(){
         if (this.root == null){
             return null;
@@ -441,6 +482,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return tempNode.getData();
     }
 
+    /**
+     * finds and node with the lowest key in tree
+     * @return data of node with the lowest key
+     */
     public Node<T,K> minNode(){
         if (this.root == null){
             return null;
@@ -452,6 +497,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return tempNode;
     }
 
+    /**
+     * finds and return node with the highest key in tree
+     * @return node with the highest key
+     */
     public Node<T,K> maxNode(){
         if (this.root == null){
             return null;
@@ -650,36 +699,49 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return null;
     }
 
+    private Node<T,K> inOrderSuccessor2(Node<T,K> node){
+        Node<T,K> tempNode = this.root;
+        Deque<Node<T,K>> stack = new ArrayDeque<>();
+        while(tempNode != null || !stack.isEmpty()){
+            while(tempNode != null){
+                stack.push(tempNode);
+                tempNode = tempNode.getLeftSon();
+            }
+            tempNode = stack.pop();
+            if(tempNode.getKey().compareTo(node.getKey()) > 0)
+                return tempNode;
+            tempNode = tempNode.getRightSon();
+        }
+        return null;
+    }
 
     /**
      * returns inOrder successor for given node
      * @param node - node for inOrder successor
      * @return node that is inOrder successor for given node
      */
-    private Node<T,K> findInOrderSuccessor(Node<T,K> node){
-        Node<T,K> tempNode = node;
-        if (tempNode.getRightSon() != null){
-            tempNode = tempNode.getRightSon();
-
-            while(tempNode.getLeftSon() != null){
-                tempNode = tempNode.getLeftSon();
+    public Node<T,K> findInOrderSuccessor(Node<T,K> node) {
+        Node<T,K> successor = null;
+        if (this.hasRightSon(node)){
+            successor = node.getRightSon();
+            while (this.hasLeftSon(successor)) {
+                successor = successor.getLeftSon();
             }
-        } else {
-            if (this.isLeftSon(tempNode)){
-                tempNode = tempNode.getParent();
-            } else {
-                while (this.isRightSon(tempNode)){
-                    tempNode = tempNode.getParent();
-                    if (tempNode == null){
-                        return null;
-                    }
-                    if (this.isRoot(tempNode)){
-                        break;
-                    }
-                }
-            }
+            return successor;
         }
-        return tempNode;
+
+        Node<T,K> tempNode = this.root;
+        while (tempNode != null)
+        {
+            if (node.getKey().compareTo(tempNode.getKey()) < 0) {
+                successor = tempNode;
+                tempNode = tempNode.getLeftSon();
+            } else if (node.getKey().compareTo(tempNode.getKey()) > 0)
+                tempNode = tempNode.getRightSon();
+            else
+                break;
+        }
+        return successor;
     }
 
     /**
