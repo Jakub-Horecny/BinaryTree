@@ -49,7 +49,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
-     * true if node hase a right son, false otherwise
+     * true if node have a right son, false otherwise
      * @param node - tree node
      * @return true if node has right son
      */
@@ -58,12 +58,39 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
-     * true if node hase a left son, false otherwise
+     * true if node have a left son, false otherwise
      * @param node - tree node
      * @return true if node has left son
      */
     private boolean hasLeftSon(Node<T,K> node) {
         return (node.getLeftSon() != null);
+    }
+
+    /**
+     *  true if node have two sons, false otherwise
+     * @param node - tree node
+     * @return - true if node has only one son
+     */
+    public boolean hasTwoSons(Node<T,K> node) {
+        return (this.hasLeftSon(node) && this.hasRightSon(node));
+    }
+
+    /**
+     *  true if node have only one son, false otherwise
+     * @param node - tree node
+     * @return - true if node has only one son
+     */
+    public boolean hasOneSon(Node<T,K> node) {
+        return (this.hasLeftSon(node) && !this.hasRightSon(node)
+        || !this.hasLeftSon(node) && this.hasRightSon(node));
+    }
+
+    /**
+     * true if tree is empty, false otherwise
+     * @return true if tree is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return (this.root == null);
     }
 
     /**
@@ -381,7 +408,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @return ArrayList<T> of items in interval
      */
     public ArrayList<T> intervalSearch(K minKey, K maxKey) {
-        K minimalKey = this.findIntervalStart(minKey, maxKey);
+        K minimalKey = this.findIntervalStart(minKey, maxKey); // finds minimal key
         ArrayList<T> tempList = new ArrayList<>(); // data to be returned
         if(minimalKey == null){
             return tempList;
@@ -587,7 +614,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
-     * inserts new node to binary tree
+     * inserts a new node to binary tree
      * @param data - node data
      * @param key - node key
      * @return true if successful, otherwise false
@@ -624,7 +651,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
-     * deletes node of binary tree
+     * deletes a node of binary tree
      * @param key - key of node
      * @return value of deleted node or null if tree is empty
      */
@@ -699,6 +726,58 @@ public class BinaryTree<T, K extends Comparable<K>> {
         return null;
     }
 
+    public T delete2(K key) {
+        Node<T,K> nodeToDelete = this.findNode(key); // finds node with corresponding key
+        // if item in tree do not exist
+        if (nodeToDelete == null) {
+            return null;
+        }
+        T data = nodeToDelete.getData();
+        // if tree has only one item, delete root and all its references
+        if (this.isRoot(nodeToDelete) && this.isLeaf(nodeToDelete)) {
+            nodeToDelete.delete();
+            this.root = null;
+            return data;
+        }
+        // if node is leaf, just delete leaf and all its references
+        if (this.isLeaf(nodeToDelete)) {
+            if (this.isLeftSon(nodeToDelete)) {
+                nodeToDelete.getParent().setLeftSon(null);
+            } else {
+                nodeToDelete.getParent().setRightSon(null);
+            }
+            nodeToDelete.delete();
+            //nodeToDelete = null;
+            return data;
+        }
+        // if node has only one child
+        if(this.hasOneSon(nodeToDelete)) {
+            Node<T,K> tempNode;
+            if (this.hasLeftSon(nodeToDelete)){
+                tempNode = nodeToDelete.getLeftSon();
+            } else {
+                tempNode = nodeToDelete.getRightSon();
+            }
+            this.swapNodes(nodeToDelete, tempNode);
+            // if delete node is root, set new root
+            if (this.isRoot(nodeToDelete)) {
+                this.root = tempNode;
+                tempNode.setParent(null);
+                nodeToDelete.delete();
+                return data;
+            } else {
+
+            }
+        }
+        return null;
+    }
+
+    /**
+     * different approach to find inOrder successor for tree node
+     * using ArrayDeque
+     * @param node - node for inOrder successor
+     * @return node that is inOrder successor for given node
+     */
     private Node<T,K> inOrderSuccessor2(Node<T,K> node){
         Node<T,K> tempNode = this.root;
         Deque<Node<T,K>> stack = new ArrayDeque<>();

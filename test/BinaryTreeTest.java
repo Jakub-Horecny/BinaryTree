@@ -291,4 +291,56 @@ class BinaryTreeTest {
         assertEquals(tempList2, tree.intervalSearch(minInterval, maxInterval));
 
     }
+
+    @Test
+    void treeShouldBeEmpty(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        assertTrue(tree.isEmpty());
+    }
+
+    @Test
+    void treeShouldNotBeEmpty(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(this.minKey,this.minKey);
+        assertFalse(tree.isEmpty());
+    }
+
+    @Test
+    void hasTwoSons() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        tree.insert(5,5);
+        Node<Integer, Integer> tempNode = tree.findNode(10);
+        assertTrue(tree.hasTwoSons(tempNode));
+    }
+    @Test
+    void hasOneSon() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        //tree.insert(20,20);
+        tree.insert(5,5);
+        Node<Integer, Integer> tempNode = tree.findNode(10);
+        assertTrue(tree.hasOneSon(tempNode));
+    }
+
+    @Test
+    void leftRotation2(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(5,5);
+        tree.insert(20,20);
+        tree.insert(15,15);
+        tree.insert(17,17);
+        Node<Integer, Integer> tempNode = tree.findNode(10);
+        tree.levelOrderPrint();
+        do {
+            tree.leftRotation(tempNode);
+            tree.rightRotation(tempNode);
+        } while (tempNode.getLeftSon() != null || tempNode.getRightSon() != null);
+
+        //tree.leftRotation(tempNode);
+        System.out.println("*********************");
+        tree.levelOrderPrint();
+    }
 }
