@@ -739,7 +739,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
             this.root = null;
             return data;
         }
-        // if node is leaf, just delete leaf and all its references
+        // if node is leaf, just delete node and all its references
         if (this.isLeaf(nodeToDelete)) {
             if (this.isLeftSon(nodeToDelete)) {
                 nodeToDelete.getParent().setLeftSon(null);
@@ -747,7 +747,6 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 nodeToDelete.getParent().setRightSon(null);
             }
             nodeToDelete.delete();
-            //nodeToDelete = null;
             return data;
         }
         // if node has only one child
@@ -758,15 +757,40 @@ public class BinaryTree<T, K extends Comparable<K>> {
             } else {
                 tempNode = nodeToDelete.getRightSon();
             }
-            this.swapNodes(nodeToDelete, tempNode);
             // if delete node is root, set new root
             if (this.isRoot(nodeToDelete)) {
                 this.root = tempNode;
                 tempNode.setParent(null);
-                nodeToDelete.delete();
+            } else {
+                if (this.hasLeftSon(nodeToDelete)){
+                    tempNode = nodeToDelete.getLeftSon();
+                } else {
+                    tempNode = nodeToDelete.getRightSon();
+                }
+
+                if (this.isLeftSon(nodeToDelete)) {
+                    nodeToDelete.getParent().setLeftSon(tempNode);
+                } else {
+                    nodeToDelete.getParent().setRightSon(tempNode);
+                }
+                tempNode.setParent(nodeToDelete.getParent());
+            }
+            nodeToDelete.delete();
+            return data;
+        // if node has left and right child
+        } else if (this.hasTwoSons(nodeToDelete)) {
+            Node<T,K> successor = this.findInOrderSuccessor(nodeToDelete);
+            this.swapNodes(nodeToDelete, successor);
+            if (this.isLeaf(successor)) {
+                if (this.isLeftSon(successor)){
+                    successor.getParent().setLeftSon(null);
+                } else {
+                    successor.getParent().setRightSon(null);
+                }
+                successor.delete();
                 return data;
             } else {
-
+                this.delete2(successor.getKey());
             }
         }
         return null;

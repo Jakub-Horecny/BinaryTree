@@ -343,4 +343,53 @@ class BinaryTreeTest {
         System.out.println("*********************");
         tree.levelOrderPrint();
     }
+    @Test
+    void deleteNew(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(50,50);
+        tree.insert(20,20);
+        tree.insert(70,70);
+        //tree.insert(17,17);
+        tree.delete2(100);
+        tree.inOrderPrint();
+    }
+    @Test
+    void deleteNew2(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(15,15);
+        tree.insert(100,100);
+        tree.insert(50,50);
+        tree.insert(20,20);
+        tree.insert(70,70);
+        tree.delete2(100);
+        tree.inOrderPrint();
+        //tree.levelOrderPrint();
+    }
+    @Test
+    void delete2(){
+        int min = 0;
+        int max = 1000000;
+        int key = 0;
+        int treeSize = 100000;
+
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+
+        for (int i = 0; i < treeSize; i++) {
+            key = min + (int)(Math.random() * ((max - min) + 1));
+            boolean b = tree.insert(key, key);
+            if (b) {
+                tempList.add(key);
+            }
+        }
+
+        for (int i = 0; i < tempList.size(); i++) {
+            tree.delete2(tempList.get(0));
+            tempList.remove(0);
+        }
+        tree.inOrderPrint();
+        assertTrue(tree.isEmpty());
+    }
+
 }
