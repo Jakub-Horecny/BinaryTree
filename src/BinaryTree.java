@@ -3,7 +3,43 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Stack;
 
-import exceptions.*;
+import javax.management.openmbean.InvalidKeyException;
+
+class Node<T, K extends Comparable<K>>{
+    private K key;
+    private T data;
+    private Node<T, K> leftSon;
+    private Node<T, K>  rightSon;
+    private Node<T, K>  parent;
+
+    public Node(T data, K key, Node<T, K> parent) {
+        this.data = data;
+        this.key = key;
+        this.parent = parent;
+        this.leftSon = null;
+        this.rightSon = null;
+    }
+
+    public void delete(){
+        this.data = null;
+        this.key = null;
+        this.parent = null;
+        this.leftSon = null;
+        this.rightSon = null;
+    }
+
+    public K getKey() { return this.key; }
+    public T getData() { return this.data; }
+    public Node<T, K> getLeftSon() { return this.leftSon; }
+    public Node<T, K> getRightSon() { return this.rightSon; }
+    public Node<T, K> getParent() { return this.parent; }
+
+    public void setKey(K key) { this.key = key; }
+    public void setData(T data) { this.data = data; }
+    public void setLeftSon(Node<T, K> leftSon) { this.leftSon = leftSon; }
+    public void setRightSon(Node<T, K> rightSon) { this.rightSon = rightSon; }
+    public void setParent(Node<T, K> parent) { this.parent = parent; }
+}
 
 public class BinaryTree<T, K extends Comparable<K>> {
     private Node<T, K> root;
@@ -24,7 +60,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
     /**
      * true if node has no sons, false otherwise
      * @param node - tree node
-     * @return true if node is leaf
+     * @return true if node is a leaf
      */
     private boolean isLeaf(Node<T,K> node) {
         return (node.getLeftSon() == null && node.getRightSon() == null);
@@ -71,7 +107,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @param node - tree node
      * @return - true if node has only one son
      */
-    public boolean hasTwoSons(Node<T,K> node) {
+    private boolean hasTwoSons(Node<T,K> node) {
         return (this.hasLeftSon(node) && this.hasRightSon(node));
     }
 
@@ -80,7 +116,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @param node - tree node
      * @return - true if node has only one son
      */
-    public boolean hasOneSon(Node<T,K> node) {
+    private boolean hasOneSon(Node<T,K> node) {
         return (this.hasLeftSon(node) && !this.hasRightSon(node)
         || !this.hasLeftSon(node) && this.hasRightSon(node));
     }
@@ -323,79 +359,45 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @return key of interval start
      */
     // TO DO
-    public K findIntervalStart(K minKey, K maxKey) {
+    private K findIntervalStart(K minKey, K maxKey) {
         if (this.root == null) {
             return null;
         }
         // if minKey > maxKey
-        if (minKey.compareTo(maxKey) > 0){
+        if (minKey.compareTo(maxKey) > 0) {
             K temp = maxKey;
             maxKey = minKey;
             minKey = temp;
         }
-        // if interval start <= min key
-        K intervalStart = this.minKey();
-        if (minKey.compareTo(intervalStart) <= 0) {
-            return intervalStart;
-        }
-        intervalStart = this.maxKey();
-        if (minKey.compareTo(intervalStart) > 0) {
-            return intervalStart;
-        }
+        K intervalStart;
+        try {
+            this.find(minKey);
+            return minKey;
 
-        Node<T,K> tempNode = this.root;
-        intervalStart = maxKey;
-        while(tempNode != null) {
-            /*
-            if (!this.isLeaf(tempNode)) {
-                if (intervalStart.compareTo(tempNode.getKey()) > 0 && minKey.compareTo(tempNode.getKey()) < 0 ) {
+        } catch (InvalidKeyException err){
+
+            Node<T,K> tempNode = this.root;
+            intervalStart = maxKey;
+            while(tempNode != null) {
+
+                if (intervalStart.compareTo(tempNode.getKey()) > 0
+                        && minKey.compareTo(tempNode.getKey()) < 0) {
                     intervalStart = tempNode.getKey();
                 }
-                if (minKey.compareTo(tempNode.getKey()) == 0) {
-                    intervalStart = tempNode.getKey();
-                    break;
-                } else if (minKey.compareTo(tempNode.getKey()) > 0) {
-                    if (tempNode.getRightSon() != null){
-                        tempNode = tempNode.getRightSon();
-                    } else {
+
+                if (!this.isLeaf(tempNode)) {
+                    if (tempNode.getKey() == minKey){
                         return tempNode.getKey();
-                    }
-                } else {
-                    if (tempNode.getLeftSon() != null) {
+                    } else if (minKey.compareTo(tempNode.getKey()) < 0) {
                         tempNode = tempNode.getLeftSon();
-                    } else {
+                    } else
+                        tempNode = tempNode.getRightSon();
+                } else {
+                    if (tempNode.getKey() == minKey){
                         return tempNode.getKey();
                     }
+                    break;
                 }
-            } else {
-                if (intervalStart.compareTo(tempNode.getKey()) > 0 && minKey.compareTo(tempNode.getKey()) < 0) {
-                    intervalStart = tempNode.getKey();
-
-                } else {
-                    return tempNode.getKey();
-                }
-            }
-            */
-            if (!this.isLeaf(tempNode)){
-                if (intervalStart.compareTo(tempNode.getKey()) > 0
-                        && minKey.compareTo(tempNode.getKey()) < 0) {
-                    intervalStart = tempNode.getKey();
-                }
-                if (tempNode.getKey() == minKey){
-                    return tempNode.getKey();
-                } else if (minKey.compareTo(tempNode.getKey()) < 0) {
-                    tempNode = tempNode.getLeftSon();
-                } else
-                    tempNode = tempNode.getRightSon();
-            } else {
-                if (intervalStart.compareTo(tempNode.getKey()) > 0
-                        && minKey.compareTo(tempNode.getKey()) < 0) {
-                    intervalStart = tempNode.getKey();
-                }
-                if (tempNode.getKey() == minKey){
-                    return tempNode.getKey();
-                }
-                break;
             }
         }
         return intervalStart;
@@ -543,15 +545,16 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * returns depth of binary tree
      * @return depth of binary tree
      */
-    public int treeDepth() {
+    public int depth() {
         int depth = 0;
         if (this.root == null){
             return depth;
         }
         Stack<Node<T,K>> stack = new Stack<>();
         stack.push(this.root);
+        int tempSize;
         do {
-            int tempSize = stack.size();
+            tempSize = stack.size();
             for (int i = 0; i < tempSize; i++) {
                 Node<T,K> tempNode = stack.pop();
                 if (tempNode.getLeftSon() != null){
@@ -568,14 +571,40 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
+     * counts number of elements in tree
+     * @return number of item in tree
+     */
+    public int size(){
+        int size = 0;
+        if (this.root == null){
+            return size;
+        }
+        Stack<Node<T,K>> stack = new Stack<>();
+        stack.push(this.root);
+        int tempSize;
+        do {
+            tempSize = stack.size();
+            size += tempSize;
+            for (int i = 0; i < tempSize; i++) {
+                Node<T,K> tempNode = stack.pop();
+                if (tempNode.getLeftSon() != null){
+                    stack.push(tempNode.getLeftSon());
+                }
+                if (tempNode.getRightSon() != null){
+                    stack.push(tempNode.getRightSon());
+                }
+            }
+        } while (!stack.isEmpty());
+        return size;
+    }
+
+    /**
      * finds item in binary tree
      * @param key - key of node
      * @return value of node, null if node does not exists
      */
     public T find(K key) {
-        if (this.root == null) {
-            return null;
-        } else {
+        if (this.root != null) {
             Node<T, K> tempNode = this.root;
             do {
                 if (key.compareTo(tempNode.getKey()) == 0) {
@@ -587,7 +616,8 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 }
             } while (tempNode != null);
         }
-        return null;
+        // if tree is empty
+        throw new InvalidKeyException("Binary tree does not contain an item with a key: " + key);
     }
 
     /**
@@ -596,9 +626,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * @return node with corresponding key, null if node does not exist
      */
     public Node<T,K> findNode(K key){
-        if (this.root == null) {
-            return null;
-        } else {
+        if (this.root != null) {
             Node<T, K> tempNode = this.root;
             do {
                 if (key.compareTo(tempNode.getKey()) == 0){
@@ -610,7 +638,8 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 }
             } while (tempNode != null);
         }
-        return null;
+        // if tree is empty
+        throw new InvalidKeyException("Binary tree does not contain an item with a key: " + key);
     }
 
     /**
@@ -628,7 +657,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
             Node<T, K> tempNode = this.root;
             do {
                 if (key.compareTo(tempNode.getKey()) == 0) {
-                    return false;
+                    throw new IllegalArgumentException("Binary tree already contains a item with key: " + key);
                 } else if (key.compareTo(tempNode.getKey()) > 0) {
                     if (tempNode.getRightSon() == null){
                         tempNode.setRightSon(new Node<>(data, key, tempNode));
@@ -651,87 +680,12 @@ public class BinaryTree<T, K extends Comparable<K>> {
     }
 
     /**
-     * deletes a node of binary tree
+     * deletes a node from binary tree
      * @param key - key of node
-     * @return value of deleted node or null if tree is empty
+     * @return value of deleted node
      */
     public T delete(K key) {
-        Node<T,K> nodeToDelete = this.findNode(key);
-        if (nodeToDelete == null) {
-            return null;
-        }
-        // if tree has only one item, delete root and all its references
-        if (this.isRoot(nodeToDelete) && this.isLeaf(nodeToDelete)) {
-            T data = nodeToDelete.getData();
-            nodeToDelete.delete();
-            this.root = null;
-            return data;
-        }
-        // if node is leaf, just delete leaf and all its references
-        if (this.isLeaf(nodeToDelete)) {
-            if (this.isLeftSon(nodeToDelete)) {
-                nodeToDelete.getParent().setLeftSon(null);
-            } else {
-                nodeToDelete.getParent().setRightSon(null);
-            }
-            T data = nodeToDelete.getData();
-            nodeToDelete.delete();
-            //nodeToDelete = null;
-            return data;
-        }
-        if (!this.isLeaf(nodeToDelete)) {
-            Node<T,K> successorNode = this.findNodeSuccessor(nodeToDelete);
-            T data = nodeToDelete.getData();
-
-            if (this.isLeaf(successorNode)){
-
-                this.swapNodes(nodeToDelete, successorNode);
-
-                if(this.isRoot(nodeToDelete)) {
-
-                    if (this.isLeftSon(successorNode)) {
-                        successorNode.getParent().setLeftSon(null);
-                    } else {
-                        successorNode.getParent().setRightSon(null);
-                    }
-
-                } else if (this.isLeftSon(successorNode)) {
-                    successorNode.getParent().setLeftSon(null);
-                } else {
-                    successorNode.getParent().setRightSon(null);
-                }
-
-                successorNode.delete();
-                //successorNode = null;
-
-            } else {
-                if (this.isRoot(nodeToDelete)){
-                    this.root.delete();
-                    this.root = successorNode;
-                    successorNode.setParent(null);
-                } else {
-                    successorNode.setParent(nodeToDelete.getParent());
-                    if (this.isLeftSon(nodeToDelete)){
-                        nodeToDelete.setLeftSon(successorNode);
-                    } else {
-                        nodeToDelete.setRightSon(successorNode);
-                    }
-                    successorNode.delete();
-                    //successorNode = null;
-                }
-
-            }
-            return data;
-        }
-        return null;
-    }
-
-    public T delete2(K key) {
         Node<T,K> nodeToDelete = this.findNode(key); // finds node with corresponding key
-        // if item in tree do not exist
-        if (nodeToDelete == null) {
-            return null;
-        }
         T data = nodeToDelete.getData();
         // if tree has only one item, delete root and all its references
         if (this.isRoot(nodeToDelete) && this.isLeaf(nodeToDelete)) {
@@ -752,7 +706,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
         // if node has only one child
         if(this.hasOneSon(nodeToDelete)) {
             Node<T,K> tempNode;
-            if (this.hasLeftSon(nodeToDelete)){
+            if (this.hasLeftSon(nodeToDelete)) {
                 tempNode = nodeToDelete.getLeftSon();
             } else {
                 tempNode = nodeToDelete.getRightSon();
@@ -762,7 +716,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 this.root = tempNode;
                 tempNode.setParent(null);
             } else {
-                if (this.hasLeftSon(nodeToDelete)){
+                if (this.hasLeftSon(nodeToDelete)) {
                     tempNode = nodeToDelete.getLeftSon();
                 } else {
                     tempNode = nodeToDelete.getRightSon();
@@ -779,8 +733,10 @@ public class BinaryTree<T, K extends Comparable<K>> {
             return data;
         // if node has left and right child
         } else if (this.hasTwoSons(nodeToDelete)) {
-            Node<T,K> successor = this.findInOrderSuccessor(nodeToDelete);
-            this.swapNodes(nodeToDelete, successor);
+            Node<T,K> successor = this.findNodeSuccessor(nodeToDelete);
+            nodeToDelete.setData(successor.getData());
+            nodeToDelete.setKey(successor.getKey());
+            // if successor is a leaf
             if (this.isLeaf(successor)) {
                 if (this.isLeftSon(successor)){
                     successor.getParent().setLeftSon(null);
@@ -790,7 +746,25 @@ public class BinaryTree<T, K extends Comparable<K>> {
                 successor.delete();
                 return data;
             } else {
-                this.delete2(successor.getKey());
+                // if successor has one son
+                if(this.hasOneSon(successor)) {
+                    Node<T, K> tempNode;
+                    if (this.hasLeftSon(successor)) {
+                        tempNode = successor.getLeftSon();
+                    } else {
+                        tempNode = successor.getRightSon();
+                    }
+
+                    if (this.isLeftSon(successor)) {
+                        successor.getParent().setLeftSon(tempNode);
+                    } else {
+                        successor.getParent().setRightSon(tempNode);
+                    }
+                    tempNode.setParent(successor.getParent());
+
+                    successor.delete();
+                    return data;
+                }
             }
         }
         return null;
@@ -851,7 +825,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * Left rotation around the given node
      * @param node - node to rotate around
      */
-    public void leftRotation(Node<T,K> node){
+    private void leftRotation(Node<T,K> node){
         if (node.getRightSon() == null) {
             return;
         }
@@ -871,7 +845,7 @@ public class BinaryTree<T, K extends Comparable<K>> {
      * Right rotation around the given node
      * @param node - node to rotate around
      */
-    public void rightRotation(Node<T,K> node){
+    private void rightRotation(Node<T,K> node){
         if (node.getLeftSon() == null) {
             return;
         }

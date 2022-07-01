@@ -1,10 +1,10 @@
-import exceptions.EmptyTreeException;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
+import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +25,9 @@ class BinaryTreeTest {
         this.itemToInsert = new int[]{300,30,39,500,101};
     }
 
+    /**
+     *
+     */
     @Test
     void treeDepthShouldBe10() {
         int depth = 10;
@@ -32,20 +35,12 @@ class BinaryTreeTest {
         for (int i = 0; i < depth; i++) {
             tree.insert(i,i);
         }
-        assertEquals(depth, tree.treeDepth());
+        assertEquals(depth, tree.depth());
     }
 
-    @Test
-    void treeDepthShouldBe20() {
-        int depth = 10;
-        int[] list = {20,5,3,15,23,26,7,8,9,50,90,99,1,2,100,200,42,69};
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        for (int i = 0; i < depth; i++) {
-            tree.insert(list[i],list[i]);
-        }
-        assertEquals(depth, tree.treeDepth());
-    }
-
+    /**
+     *
+     */
     @Test
     void minKey() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -55,6 +50,9 @@ class BinaryTreeTest {
         assertEquals(this.minKey, tree.minKey());
     }
 
+    /**
+     *
+     */
     @Test
     void maxKey() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -64,6 +62,9 @@ class BinaryTreeTest {
         assertEquals(this.maxKey, tree.maxKey());
     }
 
+    /**
+     *
+     */
     @Test
     void minValue() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -73,6 +74,9 @@ class BinaryTreeTest {
         assertEquals(this.minKey, tree.minValue());
     }
 
+    /**
+     *
+     */
     @Test
     void maxValue() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -82,14 +86,9 @@ class BinaryTreeTest {
         assertEquals(this.maxKey, tree.maxValue());
     }
 
-    @Test
-    void minNode() {
-    }
-
-    @Test
-    void maxNode() {
-    }
-
+    /**
+     *
+     */
     @Test
     void inOrderTreeTraversal(){
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -102,8 +101,11 @@ class BinaryTreeTest {
         assertEquals(tempList,tree.inOrder());
     }
 
+    /**
+     *
+     */
     @Test
-    void find() {
+    void findAllItemsInTree() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         for (int i : this.treeList) {
             tree.insert(i, i);
@@ -113,6 +115,47 @@ class BinaryTreeTest {
         }
     }
 
+    /**
+     * find should throw an InvalidKeyException exception, because tree is empty
+     */
+    @Test
+    void findShouldThrowException(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        assertThrowsExactly(InvalidKeyException.class,
+                () -> tree.find(10)
+        );
+    }
+
+    /**
+     * find should throw an InvalidKeyException exception, because tree does not contain an item
+     */
+    @Test
+    void findShouldThrowException2(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        for (int item : this.treeList) {
+            tree.insert(item, item);
+        }
+        assertThrowsExactly(InvalidKeyException.class,
+                () -> tree.find(this.maxKey+1)
+        );
+    }
+
+    /**
+     *  inserting item with same key should throw an IllegalArgumentException exception
+     */
+    @Test
+    void itemWithSameKeyShouldNotBeInserted(){
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        assertThrowsExactly(IllegalArgumentException.class, () ->
+            tree.insert(10,10)
+        );
+    }
+
+
+    /**
+     *
+     */
     @Test
     void insertAllItemToTree() {
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
@@ -123,134 +166,6 @@ class BinaryTreeTest {
             assertTrue(tree.insert(item, item));
         }
     }
-
-    @Test
-    void itemWithSameKeyWillNotBeInserted(){
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(50,50);
-        assertFalse(tree.insert(50,50));
-    }
-
-    @Test
-    void itemWithSameKeyWillNotBeInserted2() {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        for(int item: this.treeList){
-            tree.insert(item,item);
-        }
-        assertFalse(tree.insert(this.treeList[0],this.treeList[0]));
-    }
-
-    @Test
-    void deleteAllItemInTree() {
-        ArrayList<Integer> stack = new ArrayList<>();
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        for (int item: this.treeList) {
-            stack.add(item);
-            tree.insert(item, item);
-        }
-        int stackSize = stack.size();
-        for (int i = 0; i < stackSize; i++) {
-            assertEquals(stack.get(i), tree.delete(stack.get(i)));
-            System.out.println("Deleted item:" + stack.get(i));
-            System.out.println(tree.inOrder());
-            System.out.println(tree.inOrder().size());
-            System.out.println("*************************");
-            stack.remove(i);
-        }
-    }
-
-    @Test
-    void deleteAllItemInTree2() {
-        int[] arr = {50,20,80,10,30,70,100,1,15,31,35,65,75,150};
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        for (int item: arr) {
-            tree.insert(item,item);
-        }
-        System.out.println(arr.length);
-        for (int i = 0; i < arr.length; i++) {
-            assertEquals(arr[i], tree.delete(arr[i]));
-            System.out.println("Deleted item:" + arr[i]);
-            System.out.println(tree.inOrder());
-            System.out.println(tree.inOrder().size());
-            System.out.println("*************************");
-        }
-
-
-
-    }
-
-    @Test
-    void leftRotation() {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-//        tree.insert(5,5);
-//        tree.insert(3,3);
-//        tree.insert(6,6);
-//        tree.insert(2,2);
-//        tree.insert(4,4);
-//        tree.insert(7,7);
-//        tree.insert(1,1);
-//        Node<Integer, Integer> tempNode = tree.findNode(3);
-        tree.insert(42,42);
-        tree.insert(16,16);
-        tree.insert(58,58);
-        tree.insert(8,8);
-        tree.insert(25,25);
-        tree.insert(49,49);
-        tree.insert(62,62);
-        Node<Integer, Integer> tempNode = tree.findNode(49);
-        tree.leftRotation(tempNode);
-        tree.inOrderPrint();
-    }
-
-    @Test
-    void rightRotation() {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(50,50);
-        tree.insert(31,31);
-        tree.insert(10,10);
-        tree.insert(40,40);
-        tree.insert(69,69);
-        tree.insert(57,57);
-        tree.insert(90,90);
-        tree.insert(58,58);
-        tree.insert(99,99);
-        Node<Integer, Integer> tempNode = tree.findNode(69);
-        tree.rightRotation(tempNode);
-        tree.inOrderPrint();
-    }
-
-    @Test
-    void findIntervalStart() throws EmptyTreeException {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(50,50);
-        tree.insert(31,31);
-        tree.insert(10,10);
-        tree.insert(40,40);
-        tree.insert(69,69);
-        tree.insert(57,57);
-        tree.insert(90,90);
-        tree.insert(58,58);
-        tree.insert(99,99);
-        System.out.println(tree.findIntervalStart(20,99));
-        System.out.println(tree.findIntervalStart(89,99));
-        System.out.println(tree.findIntervalStart(58,99));
-        System.out.println(tree.findIntervalStart(100,150));
-    }
-
-    @Test
-    void findIntervalStart2() throws EmptyTreeException {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        for (int item: this.treeList) {
-            tree.insert(item, item);
-        }
-        System.out.println(Arrays.toString(this.treeList));
-
-        System.out.println(tree.findIntervalStart(20,99));
-        System.out.println(tree.findIntervalStart(89,99));
-        System.out.println(tree.findIntervalStart(58,99));
-        System.out.println(tree.findIntervalStart(100,150));
-    }
-
     /**
      * Test for interval search
      */
@@ -260,136 +175,346 @@ class BinaryTreeTest {
         int maxInterval = 500000;
         int min = 0;
         int max = 1000000;
-        int key = 0;
-        int minKey = max;
+        int key;
         int treeSize = 100000;
+        boolean b;
 
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        ArrayList<Integer> tempList = new ArrayList<>();
+        ArrayList<Integer> tempList = new ArrayList<>(treeSize);
+        //tree.insert(maxInterval,maxInterval);
+        //tree.insert(minInterval,minInterval);
 
-        for (int i = 0; i < 100000; i++) {
+        //tempList.add(maxInterval);
+        //tempList.add(minInterval);
+        for (int i = 0; i < treeSize; i++) {
             key = min + (int)(Math.random() * ((max - min) + 1));
-            boolean b = tree.insert(key, key);
-            if (b) {
-                tempList.add(key);
-                if (key < minKey && key >= minInterval){
-                    minKey = key;
+            try {
+                b = tree.insert(key, key);
+                if (b) {
+                    //if (key >= minInterval && key <= maxInterval) {
+                        tempList.add(key);
+                    //}
                 }
+            } catch (IllegalArgumentException ignored) {
             }
         }
-        System.out.println(minKey);
-        //ArrayList<Integer> resultList = tree.intervalSearch(minInterval, maxInterval);
-
         ArrayList<Integer> tempList2 = new ArrayList<>();
+
         for (int item : tempList) {
             if (item <= maxInterval && item >= minInterval) {
                 tempList2.add(item);
             }
         }
-        //Collections.sort(tempList2);
-        //System.out.println(tempList2);
-        assertEquals(tempList2, tree.intervalSearch(minInterval, maxInterval));
+        ArrayList<Integer> t = tree.intervalSearch(minInterval, maxInterval);
+        Collections.sort(tempList2);
+        //System.out.println(tempList2.get(tempList2.size()-1));
+        //System.out.println(t.get(t.size()-1));
 
+        assertEquals(tempList2, t);
     }
 
+    /**
+     * true if tree is empty
+     */
     @Test
     void treeShouldBeEmpty(){
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         assertTrue(tree.isEmpty());
     }
 
+    /**
+     * false if tree is not empty
+     */
     @Test
     void treeShouldNotBeEmpty(){
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         tree.insert(this.minKey,this.minKey);
         assertFalse(tree.isEmpty());
     }
-
     @Test
-    void hasTwoSons() {
+    void treeSize(){
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(10,10);
-        tree.insert(20,20);
-        tree.insert(5,5);
-        Node<Integer, Integer> tempNode = tree.findNode(10);
-        assertTrue(tree.hasTwoSons(tempNode));
-    }
-    @Test
-    void hasOneSon() {
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(10,10);
-        //tree.insert(20,20);
-        tree.insert(5,5);
-        Node<Integer, Integer> tempNode = tree.findNode(10);
-        assertTrue(tree.hasOneSon(tempNode));
+        for(int item: this.treeList){
+            tree.insert(item,item);
+        }
+        // System.out.println(this.treeList.length);
+        // System.out.println(tree.size());
+        assertEquals(this.treeList.length, tree.size());
     }
 
+    /**
+     * should delete all item from the tree
+     * at the end tree should be empty
+     */
     @Test
-    void leftRotation2(){
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(10,10);
-        tree.insert(5,5);
-        tree.insert(20,20);
-        tree.insert(15,15);
-        tree.insert(17,17);
-        Node<Integer, Integer> tempNode = tree.findNode(10);
-        tree.levelOrderPrint();
-        do {
-            tree.leftRotation(tempNode);
-            tree.rightRotation(tempNode);
-        } while (tempNode.getLeftSon() != null || tempNode.getRightSon() != null);
-
-        //tree.leftRotation(tempNode);
-        System.out.println("*********************");
-        tree.levelOrderPrint();
-    }
-    @Test
-    void deleteNew(){
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(100,100);
-        tree.insert(50,50);
-        tree.insert(20,20);
-        tree.insert(70,70);
-        //tree.insert(17,17);
-        tree.delete2(100);
-        tree.inOrderPrint();
-    }
-    @Test
-    void deleteNew2(){
-        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
-        tree.insert(15,15);
-        tree.insert(100,100);
-        tree.insert(50,50);
-        tree.insert(20,20);
-        tree.insert(70,70);
-        tree.delete2(100);
-        tree.inOrderPrint();
-        //tree.levelOrderPrint();
-    }
-    @Test
-    void delete2(){
-        int min = 0;
-        int max = 1000000;
-        int key = 0;
+    void deleteAllItemFromTree(){
+        int item;
+        boolean b;
         int treeSize = 100000;
 
         BinaryTree<Integer, Integer> tree = new BinaryTree<>();
         ArrayList<Integer> tempList = new ArrayList<>();
+        Random r = new Random();
 
         for (int i = 0; i < treeSize; i++) {
-            key = min + (int)(Math.random() * ((max - min) + 1));
-            boolean b = tree.insert(key, key);
-            if (b) {
-                tempList.add(key);
+            item = r.nextInt();
+            try {
+                b = tree.insert(item, item);
+                if (b) {
+                    tempList.add(item);
+                }
+            } catch (IllegalArgumentException ignored) {
             }
         }
-
-        for (int i = 0; i < tempList.size(); i++) {
-            tree.delete2(tempList.get(0));
+        //System.out.println(tree.inOrder().size());
+        //System.out.println(tempList.size());
+        int tempSize = tempList.size();
+        for (int i = 0; i < tempSize; i++) {
+            tree.delete(tempList.get(0));
+            //System.out.println(j);
             tempList.remove(0);
         }
-        tree.inOrderPrint();
+        //System.out.println(tree.inOrder().size());
+        //System.out.println(tempList.size());
         assertTrue(tree.isEmpty());
     }
 
+    /**
+     * delete should throw an exception because tree is empty
+     */
+    @Test
+    void deleteShouldThrowExceptionBecauseTreeIsEmpty() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        assertThrowsExactly(InvalidKeyException.class, () ->
+                tree.delete(this.minKey)
+        );
+    }
+
+    /**
+     * there is only one item in tree
+     * item should be deleted
+     */
+    @Test
+    void shouldDeleteItemFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(this.minKey, this.minKey);
+        assertEquals(this.minKey,tree.delete(this.minKey));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *    10                10
+     *      \         ->
+     *       20
+     */
+    @Test
+    void shouldDeleteRightLeafFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        assertEquals(20,tree.delete(20));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *    10            10
+     *   /      ->
+     *  5
+     */
+    @Test
+    void shouldDeleteLeftLeafFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(5,5);
+        assertEquals(5,tree.delete(5));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *    10            5
+     *   /      ->
+     *  5
+     */
+    @Test
+    void shouldDeleteRootWithLeftLeafFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(5,5);
+        assertEquals(10,tree.delete(10));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *  10              10
+     *    \               \
+     *     20       ->     30
+     *       \
+     *        30
+     */
+    @Test
+    void shouldDelete20FromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        tree.insert(30,30);
+        assertEquals(20,tree.delete(20));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *       100              100
+     *      /               /
+     *     5       ->     1
+     *    /
+     *   1
+     */
+    @Test
+    void shouldDelete5FromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(5,5);
+        tree.insert(1,1);
+        assertEquals(5,tree.delete(5));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *  10              20
+     *    \               \
+     *     20       ->     30
+     *       \
+     *        30
+     */
+    @Test
+    void shouldDelete10AsRootFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        //tree.insert(15,15);
+        tree.insert(30,30);
+        assertEquals(10,tree.delete(10));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *       100              100
+     *      /               /
+     *     5       ->     1
+     *    /
+     *   1
+     */
+    @Test
+    void shouldDelete100AsRootFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(5,5);
+        //tree.insert(6,6);
+        tree.insert(1,1);
+        assertEquals(100,tree.delete(100));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *  20 has a left son
+     *      10              10
+     *       \               \
+     *        20       ->     15
+     *       /
+     *     15
+     */
+    @Test
+    void shouldDelete20WithLeftSonFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        tree.insert(15,15);
+        //tree.insert(12,12);
+        assertEquals(20,tree.delete(20));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *       100              100
+     *      /               /
+     *     5       ->     50
+     *      \
+     *       50
+     */
+    @Test
+    void shouldDelete5WithRightSonFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(5,5);
+        //tree.insert(6,6);
+        tree.insert(50,50);
+        assertEquals(5,tree.delete(5));
+        //System.out.println(tree.inOrder());
+    }
+
+    /**
+     *      10              10
+     *       \               \
+     *        20       ->     30
+     *       /  \            /
+     *     15    30        15
+     */
+    @Test
+    void shouldDelete20WithTwoSonsFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(10,10);
+        tree.insert(20,20);
+        tree.insert(15,15);
+        tree.insert(30,30);
+        assertEquals(20,tree.delete(20));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *          100             100
+     *          /              /
+     *        5       ->     50
+     *       /  \           /
+     *     1    50         1
+     */
+    @Test
+    void shouldDelete5WithTwoSonsFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(5,5);
+        tree.insert(1,1);
+        tree.insert(50,50);
+        //tree.insert(0,0);
+        System.out.println(tree.inOrder());
+        assertEquals(5,tree.delete(5));
+        System.out.println(tree.inOrder());
+    }
+
+    /**
+     *          100                    50
+     *         /   \                 /    \
+     *        5     150      ->     5      150
+     *       /  \                  / \
+     *     1    50                1   25
+     *    /    /                 /     \
+     *   0    25                0       40
+     *          \
+     *           40
+     */
+    @Test
+    void shouldDelete100WithTwoSonsFromTree() {
+        BinaryTree<Integer, Integer> tree = new BinaryTree<>();
+        tree.insert(100,100);
+        tree.insert(150,150);
+        tree.insert(5,5);
+        tree.insert(1,1);
+        tree.insert(50,50);
+        tree.insert(25,25);
+        tree.insert(40,40);
+        tree.insert(0,0);
+        System.out.println(tree.inOrder());
+        //tree.delete(100);
+        assertEquals(100,tree.delete(100));
+        System.out.println(tree.inOrder());
+
+    }
 }
